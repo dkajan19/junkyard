@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: 'Courier New', monospace;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: filter 0.5s ease;
+            background-image: url('background.png');
+
+        }
+
+        .canvas-container {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }a
+
+        canvas {
+            position: relative;
+        }
+
+        .content {
+            text-align: center;
+            color: white;
+            position: absolute;
+            top: 40%; /* Posunutie hodín vyššie */
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        h1,
+        h2 {
+            font-size: 2em;
+            margin: 0.25em 0;
+        }
+
+        h2 {
+            font-size: 3.0vw;
+            margin-bottom: 0.1vw;
+        }
+
+        h1 {
+            font-size: 10vw;
+            margin-bottom: 0.1vw;
+        }
+
+        #menu {
+            display: none; /* Skryté menu na začiatku */
+            position: absolute;
+            top: 40px; /* Posunutie menu pod ikonku */
+            left: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 2; /* Aby bolo nad pozadím */
+        }
+
+        #menuButton {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            color: white; /* Biela farba ikonky */
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 2; /* Aby bolo nad pozadím */
+        }
+
+        input[type="range"] {
+            margin-top: 10px;
+        }
+    </style>
+    <title>New Tab</title>
+</head>
+
+<body>
+    <div class="background" id="background"></div>
+    <div class="canvas-container">
+        <canvas id="timeCanvas"></canvas>
+        <div class="content">
+            <h1 id="time"></h1>
+            <h2 id="date"></h2>
+        </div>
+    </div>
+
+    <div id="menu">
+        <label for="bgBrightnessSlider">Background Brightness:</label>
+        <input type="range" id="bgBrightnessSlider" min="0" max="100" step="1" value="50">
+        <br>
+        <label for="bgImage">Background Image:</label>
+        <input type="file" id="bgImage" accept="image/*">
+    </div>
+
+    <div id="menuButton">&#9776;</div>
+
+    <script>
+        const background = document.getElementById("background");
+        const canvas = document.getElementById("timeCanvas");
+        const ctx = canvas.getContext("2d");
+        const bgBrightnessSlider = document.getElementById("bgBrightnessSlider");
+        const bgImageInput = document.getElementById("bgImage");
+        const menu = document.getElementById("menu");
+        const menuButton = document.getElementById("menuButton");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let bgBrightness = localStorage.getItem("bgBrightness") || 50;
+        bgBrightnessSlider.value = bgBrightness;
+
+        bgBrightnessSlider.addEventListener("input", function () {
+            bgBrightness = this.value;
+            localStorage.setItem("bgBrightness", bgBrightness);
+            updateBackgroundBrightness();
+        });
+
+        bgImageInput.addEventListener("change", function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = function () {
+                        background.style.backgroundImage = `url('${img.src}')`;
+                        updateBackgroundBrightness();
+                        localStorage.setItem("bgImage", img.src);
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        menuButton.addEventListener("click", function () {
+            // Zmena stavu zobrazenia menu po kliknutí na tlačidlo
+            menu.style.display = (menu.style.display === "none" || menu.style.display === "") ? "block" : "none";
+        });
+
+        const storedBgImage = localStorage.getItem("bgImage");
+        if (storedBgImage) {
+            background.style.backgroundImage = `url('${storedBgImage}')`;
+            updateBackgroundBrightness();
+        }
+
+        function updateBackgroundBrightness() {
+            const brightness = bgBrightness / 100;
+            const filterValue = `brightness(${brightness})`;
+            background.style.filter = filterValue;
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const timeElement = document.getElementById("time");
+            const dateElement = document.getElementById("date");
+
+            const timeString = now.toLocaleTimeString();
+
+            const dateString = now.toLocaleDateString(navigator.language, {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            timeElement.textContent = timeString;
+            dateElement.textContent = dateString;
+
+            setTimeout(updateTime, 1000);
+        }
+
+        updateTime();
+    </script>
+</body>
+
+</html>

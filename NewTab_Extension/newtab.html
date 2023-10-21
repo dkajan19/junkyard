@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Tab</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="background" id="background"></div>
+    <div class="canvas-container">
+        <canvas id="timeCanvas"></canvas>
+        <div class="content">
+            <h1 id="time"></h1>
+            <h2 id="date"></h2>
+        </div>
+    </div>
+
+    <div id="menu">
+        <label for="bgBrightnessSlider">Background Brightness:</label>
+        <input type="range" id="bgBrightnessSlider" min="0" max="100" step="1" value="50">
+        <br>
+        <label for="bgImage">Background Image:</label>
+        <input type="file" id="bgImage" accept="image/*">
+    </div>
+
+    <div id="menuButton">&#9776;</div>
+
+    <script src="script.js"></script>
+</body>
+</html>
