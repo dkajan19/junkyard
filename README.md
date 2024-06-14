@@ -1,5 +1,7 @@
 # Trash
 
+<img src="./images/overtime-programmer.png" alt="Overtime Programmer" width="300">
+
 This repository serves as a storage for various codes, scripts, and experiments that don't have a specific place.
 
 ## Usage
